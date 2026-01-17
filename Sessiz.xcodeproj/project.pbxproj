@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -63,6 +63,7 @@
 		A1000022 = {
 			isa = PBXGroup;
 			children = (
+				A1000001 /* Sessiz.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
