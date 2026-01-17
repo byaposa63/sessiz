@@ -61,16 +61,14 @@ jobs:
     - name: List schemes and targets
       run: |
         echo "📋 Scheme'ler listeleniyor..."
-        xcodebuild -list -project Sessiz.xcodeproj 2>&1 || {
-          echo "❌ Scheme listesi alınamadı!"
-          echo "📋 Detaylı hata:"
-          xcodebuild -list -project Sessiz.xcodeproj 2>&1
-          exit 1
-        }
+        echo "⚠️  Not: xcodebuild -list segmentation fault veriyor, direkt build denenecek"
+        echo "📋 Varsayılan scheme: Sessiz"
+        echo "✅ Scheme listesi atlandı, direkt build yapılacak"
     
     - name: Build Archive
       run: |
         echo "📦 Archive oluşturuluyor..."
+        echo "⚠️  Not: xcodebuild -list çalışmıyor, direkt build denenecek"
         xcodebuild clean archive \
           -project Sessiz.xcodeproj \
           -scheme Sessiz \
@@ -80,6 +78,7 @@ jobs:
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
+          -allowProvisioningUpdates \
           2>&1 | tee archive.log
         BUILD_STATUS=${PIPESTATUS[0]}
         if [ $BUILD_STATUS -ne 0 ]; then
