@@ -1,0 +1,153 @@
+═══════════════════════════════════════════════════════════════
+  GITHUB WORKFLOW - KOPYALA YAPIŞTIR
+═══════════════════════════════════════════════════════════════
+
+GitHub'da şu adımları izleyin:
+
+1. https://github.com/byaposa63/sessiz adresine gidin
+2. "Add file" → "Create new file" butonuna tıklayın
+3. Dosya yolu: .github/workflows/build-ipa.yml
+4. Aşağıdaki içeriği yapıştırın:
+
+═══════════════════════════════════════════════════════════════
+
+name: Build iOS .ipa
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    
+    - name: Show project structure
+      run: |
+        echo "📁 Mevcut dosyalar:"
+        ls -la
+        echo ""
+        echo "📁 Xcode projesi:"
+        ls -la Sessiz.xcodeproj/ || echo "❌ Proje bulunamadı"
+        echo ""
+        echo "📄 Swift dosyaları:"
+        ls -la *.swift || echo "❌ Swift dosyaları bulunamadı"
+    
+    - name: List schemes and targets
+      run: |
+        if [ -f "Sessiz.xcodeproj/project.pbxproj" ]; then
+          echo "✅ Proje dosyası bulundu"
+          echo "📋 Scheme'ler:"
+          xcodebuild -list -project Sessiz.xcodeproj 2>&1 || echo "Liste alınamadı"
+        else
+          echo "❌ Proje dosyası bulunamadı!"
+          exit 1
+        fi
+    
+    - name: Build Archive
+      run: |
+        echo "📦 Archive oluşturuluyor..."
+        xcodebuild clean archive \
+          -project Sessiz.xcodeproj \
+          -scheme Sessiz \
+          -configuration Release \
+          -archivePath ./build/Sessiz.xcarchive \
+          -destination "generic/platform=iOS" \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          2>&1 | tee archive.log
+        BUILD_STATUS=${PIPESTATUS[0]}
+        if [ $BUILD_STATUS -ne 0 ]; then
+          echo "❌ Archive başarısız! Exit code: $BUILD_STATUS"
+          echo "📋 Hata detayları (son 100 satır):"
+          tail -100 archive.log
+          exit $BUILD_STATUS
+        fi
+        echo "✅ Archive başarılı!"
+    
+    - name: Create Export Options
+      if: success()
+      run: |
+        mkdir -p build
+        cat > build/ExportOptions.plist << 'EOF'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>method</key>
+            <string>ad-hoc</string>
+        </dict>
+        </plist>
+        EOF
+    
+    - name: Export IPA
+      if: success()
+      run: |
+        echo "📤 IPA export ediliyor..."
+        xcodebuild -exportArchive \
+          -archivePath ./build/Sessiz.xcarchive \
+          -exportPath ./build/export \
+          -exportOptionsPlist ./build/ExportOptions.plist \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          2>&1 | tee export.log
+        EXPORT_STATUS=${PIPESTATUS[0]}
+        if [ $EXPORT_STATUS -ne 0 ]; then
+          echo "❌ Export başarısız! Exit code: $EXPORT_STATUS"
+          echo "📋 Hata detayları (son 100 satır):"
+          tail -100 export.log
+          exit $EXPORT_STATUS
+        fi
+        echo "✅ Export başarılı!"
+    
+    - name: Find IPA file
+      if: success()
+      id: find_ipa
+      run: |
+        IPA_FILE=$(find ./build/export -name "*.ipa" 2>/dev/null | head -1)
+        if [ -z "$IPA_FILE" ]; then
+          echo "❌ IPA dosyası bulunamadı!"
+          echo "📁 Export klasörü içeriği:"
+          ls -la ./build/export/ 2>/dev/null || echo "Export klasörü yok"
+          exit 1
+        fi
+        echo "ipa_path=$IPA_FILE" >> $GITHUB_OUTPUT
+        echo "✅ IPA bulundu: $IPA_FILE"
+        ls -lh "$IPA_FILE"
+    
+    - name: Upload IPA artifact
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Sessiz.ipa
+        path: ${{ steps.find_ipa.outputs.ipa_path }}
+        retention-days: 30
+    
+    - name: Upload build logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs
+        path: |
+          archive.log
+          export.log
+        if-no-files-found: ignore
+        retention-days: 7
+
+═══════════════════════════════════════════════════════════════
+
+5. "Commit new file" butonuna tıklayın
+6. Actions sekmesine gidin
+7. "Build iOS .ipa" workflow'unu seçin
+8. "Run workflow" butonuna tıklayın
+
+═══════════════════════════════════════════════════════════════
+
