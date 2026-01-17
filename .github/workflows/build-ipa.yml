@@ -26,17 +26,47 @@ jobs:
         echo ""
         echo "📄 Swift dosyaları:"
         ls -la *.swift || echo "❌ Swift dosyaları bulunamadı"
+        echo ""
+        echo "📁 Assets klasörü:"
+        ls -la Assets.xcassets/ || echo "❌ Assets bulunamadı"
+        echo ""
+        echo "📄 LaunchScreen:"
+        ls -la LaunchScreen.storyboard || echo "❌ LaunchScreen bulunamadı"
+        echo ""
+        echo "🔍 Proje dosyası kontrolü:"
+        if [ -f "Sessiz.xcodeproj/project.pbxproj" ]; then
+          echo "✅ project.pbxproj bulundu"
+          echo "📊 Dosya boyutu: $(wc -l < Sessiz.xcodeproj/project.pbxproj) satır"
+          echo "🔍 İlk 10 satır:"
+          head -20 Sessiz.xcodeproj/project.pbxproj
+        else
+          echo "❌ project.pbxproj bulunamadı!"
+          exit 1
+        fi
+    
+    - name: Validate project file
+      run: |
+        echo "🔍 Proje dosyası doğrulanıyor..."
+        if [ ! -f "Sessiz.xcodeproj/project.pbxproj" ]; then
+          echo "❌ project.pbxproj bulunamadı!"
+          exit 1
+        fi
+        echo "✅ Proje dosyası bulundu"
+        echo "📊 Dosya boyutu: $(wc -c < Sessiz.xcodeproj/project.pbxproj) bytes"
+        echo "🔍 Syntax kontrolü:"
+        plutil -lint Sessiz.xcodeproj/project.pbxproj 2>&1 || {
+          echo "⚠️  plutil hatası (normal olabilir)"
+        }
     
     - name: List schemes and targets
       run: |
-        if [ -f "Sessiz.xcodeproj/project.pbxproj" ]; then
-          echo "✅ Proje dosyası bulundu"
-          echo "📋 Scheme'ler:"
-          xcodebuild -list -project Sessiz.xcodeproj 2>&1 || echo "Liste alınamadı"
-        else
-          echo "❌ Proje dosyası bulunamadı!"
+        echo "📋 Scheme'ler listeleniyor..."
+        xcodebuild -list -project Sessiz.xcodeproj 2>&1 || {
+          echo "❌ Scheme listesi alınamadı!"
+          echo "📋 Detaylı hata:"
+          xcodebuild -list -project Sessiz.xcodeproj 2>&1
           exit 1
-        fi
+        }
     
     - name: Build Archive
       run: |
