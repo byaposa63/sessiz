@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -95,18 +95,18 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1600;
+				LastSwiftUpdateCheck = 1300;
+				LastUpgradeCheck = 1300;
 				TargetAttributes = {
 					A1000001 = {
-						CreatedOnToolsVersion = 16.0;
+						CreatedOnToolsVersion = 13.0;
 						DevelopmentTeam = "";
-						LastSwiftMigration = 1600;
+						LastSwiftMigration = 1300;
 					};
 				};
 			};
 			buildConfigurationList = A1000023 /* Build configuration list for PBXProject "Sessiz" */;
-			compatibilityVersion = "Xcode 16.0";
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
