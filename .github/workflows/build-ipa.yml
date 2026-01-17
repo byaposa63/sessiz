@@ -1,4 +1,4 @@
-name: Build iOS .ipa (Simple)
+name: Build iOS .ipa
 
 on:
   workflow_dispatch:
@@ -56,9 +56,6 @@ jobs:
           echo "❌ Archive başarısız! Exit code: $BUILD_STATUS"
           echo "📋 Hata detayları (son 100 satır):"
           tail -100 archive.log
-          echo ""
-          echo "📋 Tüm log (ilk 50 satır):"
-          head -50 archive.log
           exit $BUILD_STATUS
         fi
         echo "✅ Archive başarılı!"
@@ -77,27 +74,16 @@ jobs:
         </dict>
         </plist>
         EOF
-        echo "✅ ExportOptions.plist oluşturuldu"
     
     - name: Export IPA
       if: success()
       run: |
-        echo "📤 IPA export ediliyor..."
         xcodebuild -exportArchive \
           -archivePath ./build/Sessiz.xcarchive \
           -exportPath ./build/export \
           -exportOptionsPlist ./build/ExportOptions.plist \
           CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO \
-          2>&1 | tee export.log
-        EXPORT_STATUS=${PIPESTATUS[0]}
-        if [ $EXPORT_STATUS -ne 0 ]; then
-          echo "❌ Export başarısız! Exit code: $EXPORT_STATUS"
-          echo "📋 Hata detayları (son 100 satır):"
-          tail -100 export.log
-          exit $EXPORT_STATUS
-        fi
-        echo "✅ Export başarılı!"
+          CODE_SIGNING_REQUIRED=NO
     
     - name: Find IPA file
       if: success()
@@ -105,14 +91,12 @@ jobs:
       run: |
         IPA_FILE=$(find ./build/export -name "*.ipa" 2>/dev/null | head -1)
         if [ -z "$IPA_FILE" ]; then
-          echo "❌ IPA dosyası bulunamadı!"
-          echo "📁 Export klasörü içeriği:"
-          ls -la ./build/export/ 2>/dev/null || echo "Export klasörü yok"
+          echo "❌ IPA bulunamadı!"
+          ls -la ./build/export/ || true
           exit 1
         fi
         echo "ipa_path=$IPA_FILE" >> $GITHUB_OUTPUT
-        echo "✅ IPA bulundu: $IPA_FILE"
-        ls -lh "$IPA_FILE"
+        echo "✅ IPA: $IPA_FILE"
     
     - name: Upload IPA artifact
       if: success()
@@ -121,14 +105,3 @@ jobs:
         name: Sessiz.ipa
         path: ${{ steps.find_ipa.outputs.ipa_path }}
         retention-days: 30
-    
-    - name: Upload build logs
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-logs
-        path: |
-          archive.log
-          export.log
-        if-no-files-found: ignore
-        retention-days: 7
