@@ -1,0 +1,136 @@
+name: Build iOS .ipa (Debug)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    
+    - name: Debug - Show environment
+      run: |
+        echo "🔍 Xcode versiyonu:"
+        xcodebuild -version
+        echo ""
+        echo "🔍 Swift versiyonu:"
+        swift --version
+        echo ""
+        echo "🔍 Mevcut dizin:"
+        pwd
+        echo ""
+        echo "🔍 Dosya yapısı:"
+        ls -la
+    
+    - name: Debug - Check Xcode project
+      run: |
+        if [ -d "Sessiz.xcodeproj" ]; then
+          echo "✅ Xcode projesi bulundu"
+          echo "📋 Proje içeriği:"
+          ls -la Sessiz.xcodeproj/
+        else
+          echo "❌ Xcode projesi bulunamadı!"
+          echo "📁 Mevcut dosyalar:"
+          find . -name "*.xcodeproj" -o -name "*.xcworkspace" | head -10
+          exit 1
+        fi
+    
+    - name: Debug - List schemes
+      run: |
+        echo "📋 Scheme'ler:"
+        xcodebuild -list -project Sessiz.xcodeproj 2>&1 || {
+          echo "❌ Scheme listesi alınamadı, alternatif yöntem:"
+          xcodebuild -list 2>&1 || true
+        }
+    
+    - name: Debug - Check Swift files
+      run: |
+        echo "📄 Swift dosyaları:"
+        find . -name "*.swift" -type f | head -10
+        echo ""
+        echo "📄 Info.plist:"
+        ls -la Info.plist || echo "Info.plist bulunamadı"
+    
+    - name: Build Archive (with detailed output)
+      run: |
+        set -x  # Debug mode
+        xcodebuild clean archive \
+          -project Sessiz.xcodeproj \
+          -scheme Sessiz \
+          -configuration Release \
+          -archivePath ./build/Sessiz.xcarchive \
+          -destination "generic/platform=iOS" \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          | tee build.log
+        BUILD_STATUS=${PIPESTATUS[0]}
+        if [ $BUILD_STATUS -ne 0 ]; then
+          echo "❌ Build başarısız! Exit code: $BUILD_STATUS"
+          echo "📋 Son 50 satır:"
+          tail -50 build.log
+          exit $BUILD_STATUS
+        fi
+    
+    - name: Create Export Options
+      if: success()
+      run: |
+        mkdir -p build
+        cat > build/ExportOptions.plist << 'EOF'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>method</key>
+            <string>ad-hoc</string>
+        </dict>
+        </plist>
+        EOF
+    
+    - name: Export IPA
+      if: success()
+      run: |
+        xcodebuild -exportArchive \
+          -archivePath ./build/Sessiz.xcarchive \
+          -exportPath ./build/export \
+          -exportOptionsPlist ./build/ExportOptions.plist \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          | tee export.log
+        EXPORT_STATUS=${PIPESTATUS[0]}
+        if [ $EXPORT_STATUS -ne 0 ]; then
+          echo "❌ Export başarısız! Exit code: $EXPORT_STATUS"
+          echo "📋 Son 50 satır:"
+          tail -50 export.log
+          exit $EXPORT_STATUS
+        fi
+    
+    - name: Find and Upload IPA
+      if: success()
+      run: |
+        IPA_FILE=$(find ./build/export -name "*.ipa" 2>/dev/null | head -1)
+        if [ -z "$IPA_FILE" ]; then
+          echo "❌ IPA dosyası bulunamadı!"
+          echo "📁 Export klasörü:"
+          ls -la ./build/export/ || echo "Klasör yok"
+          exit 1
+        fi
+        echo "✅ IPA bulundu: $IPA_FILE"
+        ls -lh "$IPA_FILE"
+    
+    - name: Upload IPA artifact
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Sessiz.ipa
+        path: build/export/*.ipa
+        retention-days: 30
+

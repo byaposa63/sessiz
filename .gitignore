@@ -1,0 +1,54 @@
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+*.xcworkspace
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad
+
+# Swift
+*.swiftmodule
+*.swiftdoc
+*.swiftc
+# *.swift  # Swift kaynak dosyalarını commit etmeliyiz!
+
+# Build
+build/
+DerivedData/
+# *.ipa  # GitHub Actions için .ipa dosyalarını commit edebiliriz
+*.dSYM.zip
+*.dSYM
+
+# CocoaPods
+Pods/
+*.podspec
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+uploaded_data/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Token files (security)
+*_TOKEN*.ps1
+*_TOKEN*.sh
+*_TOKEN*.txt
+*_TOKEN*.md
+

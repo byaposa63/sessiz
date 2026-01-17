@@ -1,0 +1,153 @@
+═══════════════════════════════════════════════════════════════
+  SESSİZ iOS UYGULAMASI - .IPA DOSYASI OLUŞTURMA ADIMLARI
+═══════════════════════════════════════════════════════════════
+
+⚠️  ÖNEMLİ: .ipa dosyası sadece Mac + Xcode ile oluşturulabilir!
+    Ben bu dosyayı otomatik oluşturamam, size adımları
+    veriyorum. Lütfen aşağıdaki adımları Mac'inizde takip edin.
+
+═══════════════════════════════════════════════════════════════
+  ADIM 1: XCODE'DA PROJEYİ AÇIN
+═══════════════════════════════════════════════════════════════
+
+1. Mac'inizde Xcode'u açın
+2. File > Open ile "Sessiz.xcodeproj" dosyasını açın
+3. Proje yüklenecek
+
+═══════════════════════════════════════════════════════════════
+  ADIM 2: SIGNING AYARLARI
+═══════════════════════════════════════════════════════════════
+
+1. Sol panelde "Sessiz" projesine tıklayın
+2. "Signing & Capabilities" sekmesine gidin
+3. "Automatically manage signing" işaretleyin
+4. "Team" olarak Apple Developer hesabınızı seçin
+   (Ücretsiz hesap da çalışır)
+5. Bundle Identifier benzersiz olmalı:
+   Örnek: com.yourcompany.sessiz
+
+═══════════════════════════════════════════════════════════════
+  ADIM 3: CAPABILITIES EKLEYİN
+═══════════════════════════════════════════════════════════════
+
+1. "+ Capability" butonuna tıklayın
+2. "Background Modes" ekleyin
+3. Şunları işaretleyin:
+   ✅ Location updates
+   ✅ Audio, AirPlay, and Picture in Picture
+   ✅ Background processing
+
+═══════════════════════════════════════════════════════════════
+  ADIM 4: ARCHIVE OLUŞTURUN
+═══════════════════════════════════════════════════════════════
+
+1. Xcode'un üst kısmında device seçiciden:
+   "Any iOS Device" seçin
+   ⚠️  Simulator seçmeyin!
+
+2. Menüden: Product > Archive
+   (Veya: ⌘B sonra Product > Archive)
+
+3. Derleme başlayacak (5-10 dakika)
+4. Tamamlandığında Organizer penceresi açılacak
+
+═══════════════════════════════════════════════════════════════
+  ADIM 5: .IPA DOSYASINI EXPORT EDİN
+═══════════════════════════════════════════════════════════════
+
+1. Organizer penceresinde archive'inizi seçin
+2. "Distribute App" butonuna tıklayın
+
+3. Distribution Method seçin:
+   → "Ad Hoc" (Test için - önerilen)
+   → "Development" (Sadece kayıtlı cihazlar)
+   → "App Store Connect" (App Store için)
+
+4. "Next" butonuna tıklayın
+
+5. Sertifika ve Provisioning Profile:
+   → Otomatik imzalama seçeneğini seçin
+   → "Next"
+
+6. Export:
+   → "Export" butonuna tıklayın
+   → Kayıt konumunu seçin (örn: Desktop)
+   → "Export"
+
+7. .ipa dosyası seçtiğiniz konuma kaydedilecek
+   Dosya adı: Sessiz.ipa (veya benzeri)
+
+═══════════════════════════════════════════════════════════════
+  ADIM 6: SUNUCUYA YÜKLEYİN
+═══════════════════════════════════════════════════════════════
+
+YÖNTEM 1: Web Arayüzü (Önerilen)
+─────────────────────────────────
+1. Tarayıcıda açın:
+   https://papayawhip-falcon-938452.hostingersite.com/upload_ipa.php
+
+2. Giriş yapın (Kullanıcı: 1, Şifre: 1)
+
+3. .ipa dosyasını seçin veya sürükleyip bırakın
+
+4. "Dosyayı Yükle" butonuna tıklayın
+
+5. ✅ Dosya yüklenecek: uploads/app/Sessiz.ipa
+
+
+YÖNTEM 2: FTP ile Manuel
+─────────────────────────
+1. FTP ile bağlanın:
+   Host: 147.93.42.246
+   User: u265210178.papayawhip-falcon-938452.hostingersite.com
+   Pass: Sa8654210!!
+
+2. public_html/uploads/app/ klasörüne gidin
+
+3. .ipa dosyasını "Sessiz.ipa" olarak yükleyin
+
+═══════════════════════════════════════════════════════════════
+  ADIM 7: TEST EDİN
+═══════════════════════════════════════════════════════════════
+
+1. app-install.php sayfasına gidin
+2. "Uygulamayı İndir" butonunun göründüğünü kontrol edin
+3. iOS cihazınızda Safari ile açın
+4. İndirme linkine tıklayın
+5. Kurulum talimatlarını takip edin
+
+═══════════════════════════════════════════════════════════════
+  SORUN GİDERME
+═══════════════════════════════════════════════════════════════
+
+❌ "No signing certificate found"
+   → Apple Developer hesabınızı Xcode'a ekleyin
+   → Xcode > Preferences > Accounts
+
+❌ "Provisioning profile not found"
+   → "Automatically manage signing" işaretleyin
+   → Xcode otomatik oluşturacak
+
+❌ Archive oluşturulamıyor
+   → "Any iOS Device" seçili olduğundan emin olun
+   → Simulator seçiliyse Archive oluşturulamaz
+   → Tüm build hatalarını düzeltin
+
+❌ .ipa dosyası çok büyük
+   → Normal: 50-200MB arası olabilir
+   → Maksimum: 500MB (sunucu limiti)
+
+═══════════════════════════════════════════════════════════════
+  ÖZET
+═══════════════════════════════════════════════════════════════
+
+1. ✅ Xcode'da projeyi aç
+2. ✅ Signing ayarlarını yap
+3. ✅ Product > Archive
+4. ✅ Distribute App > Ad Hoc
+5. ✅ Export et
+6. ✅ upload_ipa.php ile yükle
+7. ✅ app-install.php'den test et
+
+═══════════════════════════════════════════════════════════════
+

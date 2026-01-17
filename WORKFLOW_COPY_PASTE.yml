@@ -1,0 +1,112 @@
+name: Build iOS .ipa
+
+on:
+  workflow_dispatch:  # Manuel tetikleme
+  push:
+    branches:
+      - main
+    paths:
+      - '*.swift'
+      - 'Info.plist'
+      - 'Sessiz.xcodeproj/**'
+
+jobs:
+  build:
+    runs-on: macos-latest  # GitHub'ın ücretsiz Mac runner'ı
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+    
+    - name: Show Xcode version
+      run: xcodebuild -version
+    
+    - name: Build Archive
+      run: |
+        xcodebuild clean archive \
+          -project Sessiz.xcodeproj \
+          -scheme Sessiz \
+          -configuration Release \
+          -archivePath ./build/Sessiz.xcarchive \
+          -destination "generic/platform=iOS" \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
+    
+    - name: Create Export Options
+      run: |
+        mkdir -p build
+        cat > build/ExportOptions.plist << EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>method</key>
+            <string>ad-hoc</string>
+        </dict>
+        </plist>
+        EOF
+    
+    - name: Export IPA
+      run: |
+        xcodebuild -exportArchive \
+          -archivePath ./build/Sessiz.xcarchive \
+          -exportPath ./build/export \
+          -exportOptionsPlist ./build/ExportOptions.plist \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO
+    
+    - name: Find IPA file
+      id: find_ipa
+      run: |
+        IPA_FILE=$(find ./build/export -name "*.ipa" | head -1)
+        if [ -z "$IPA_FILE" ]; then
+          echo "❌ IPA dosyası bulunamadı!"
+          exit 1
+        fi
+        echo "ipa_path=$IPA_FILE" >> $GITHUB_OUTPUT
+        echo "✅ IPA bulundu: $IPA_FILE"
+        ls -lh "$IPA_FILE"
+    
+    - name: Upload IPA artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Sessiz.ipa
+        path: ${{ steps.find_ipa.outputs.ipa_path }}
+        retention-days: 30
+    
+    - name: Upload to server (FTP)
+      if: success()
+      env:
+        FTP_HOST: ${{ secrets.FTP_HOST }}
+        FTP_USER: ${{ secrets.FTP_USER }}
+        FTP_PASS: ${{ secrets.FTP_PASS }}
+      run: |
+        # FTP ile yükleme için lftp kullan
+        brew install lftp || true
+        lftp -c "
+        set ftp:ssl-allow no
+        open -u \$FTP_USER,\$FTP_PASS \$FTP_HOST
+        cd public_html/uploads/app
+        mkdir -p public_html/uploads/app
+        put ${{ steps.find_ipa.outputs.ipa_path }} -o Sessiz.ipa
+        quit
+        " || echo "FTP upload failed, but IPA is available in artifacts"
+    
+    - name: Build Summary
+      if: always()
+      run: |
+        echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+        if [ -f "${{ steps.find_ipa.outputs.ipa_path }}" ]; then
+          echo "✅ IPA dosyası başarıyla oluşturuldu!" >> $GITHUB_STEP_SUMMARY
+          echo "📦 Dosya: ${{ steps.find_ipa.outputs.ipa_path }}" >> $GITHUB_STEP_SUMMARY
+          echo "📊 Boyut: $(du -h "${{ steps.find_ipa.outputs.ipa_path }}" | cut -f1)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ IPA dosyası oluşturulamadı!" >> $GITHUB_STEP_SUMMARY
+        fi
+

@@ -1,0 +1,71 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000001 /* AppDelegate.swift */ = {isa = PBXBuildFile; fileRef = A1000002 /* AppDelegate.swift */; };
+		A1000003 /* ViewController.swift */ = {isa = PBXBuildFile; fileRef = A1000004 /* ViewController.swift */; };
+		A1000005 /* LocationManager.swift */ = {isa = PBXBuildFile; fileRef = A1000006 /* LocationManager.swift */; };
+		A1000007 /* AudioRecorder.swift */ = {isa = PBXBuildFile; fileRef = A1000008 /* AudioRecorder.swift */; };
+		A1000009 /* DataUploader.swift */ = {isa = PBXBuildFile; fileRef = A1000010 /* DataUploader.swift */; };
+		A1000011 /* Assets.xcassets */ = {isa = PBXBuildFile; fileRef = A1000012 /* Assets.xcassets */; };
+		A1000013 /* LaunchScreen.storyboard */ = {isa = PBXBuildFile; fileRef = A1000014 /* LaunchScreen.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1000001 /* Sessiz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sessiz.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1000002 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A1000004 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A1000006 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		A1000008 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		A1000010 /* DataUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUploader.swift; sourceTree = "<group>"; };
+		A1000012 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1000014 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A1000015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		A1000000 = {
+			isa = PBXGroup;
+			children = (
+				A1000002 /* AppDelegate.swift */,
+				A1000004 /* ViewController.swift */,
+				A1000006 /* LocationManager.swift */,
+				A1000008 /* AudioRecorder.swift */,
+				A1000010 /* DataUploader.swift */,
+				A1000012 /* Assets.xcassets */,
+				A1000014 /* LaunchScreen.storyboard */,
+				A1000015 /* Info.plist */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1000001 /* Sessiz */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1000016 /* Build configuration list for PBXNativeTarget "Sessiz" */;
+			buildPhases = (
+				A1000017 /* Sources */,
+				A1000018 /* Frameworks */,
+				A1000019 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Sessiz;
+			productName = Sessiz;
+			productReference = A1000001 /* Sessiz.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+	};
+	rootObject = A1000020 /* Project object */;
+}
+
