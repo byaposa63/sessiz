@@ -1,4 +1,4 @@
-name: Build iOS .ipa (Debug)
+name: Build iOS .ipa (Simple)
 
 on:
   workflow_dispatch:
@@ -16,34 +16,31 @@ jobs:
       with:
         xcode-version: latest-stable
     
-    - name: Debug - Show environment
+    - name: Show project structure
       run: |
-        echo "🔍 Xcode versiyonu:"
-        xcodebuild -version
-        echo ""
-        echo "🔍 Mevcut dizin:"
-        pwd
-        echo ""
-        echo "🔍 Dosya yapısı:"
+        echo "📁 Mevcut dosyalar:"
         ls -la
+        echo ""
+        echo "📁 Xcode projesi:"
+        ls -la Sessiz.xcodeproj/ || echo "❌ Proje bulunamadı"
+        echo ""
+        echo "📄 Swift dosyaları:"
+        ls -la *.swift || echo "❌ Swift dosyaları bulunamadı"
     
-    - name: Debug - Check Xcode project
+    - name: List schemes and targets
       run: |
-        if [ -d "Sessiz.xcodeproj" ]; then
-          echo "✅ Xcode projesi bulundu"
+        if [ -f "Sessiz.xcodeproj/project.pbxproj" ]; then
+          echo "✅ Proje dosyası bulundu"
+          echo "📋 Scheme'ler:"
+          xcodebuild -list -project Sessiz.xcodeproj 2>&1 || echo "Liste alınamadı"
         else
-          echo "❌ Xcode projesi bulunamadı!"
-          find . -name "*.xcodeproj" | head -10
+          echo "❌ Proje dosyası bulunamadı!"
           exit 1
         fi
     
-    - name: Debug - List schemes
-      run: |
-        echo "📋 Scheme'ler:"
-        xcodebuild -list -project Sessiz.xcodeproj 2>&1
-    
     - name: Build Archive
       run: |
+        echo "📦 Archive oluşturuluyor..."
         xcodebuild clean archive \
           -project Sessiz.xcodeproj \
           -scheme Sessiz \
@@ -53,14 +50,18 @@ jobs:
           CODE_SIGN_IDENTITY="" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
-          2>&1 | tee build.log
+          2>&1 | tee archive.log
         BUILD_STATUS=${PIPESTATUS[0]}
         if [ $BUILD_STATUS -ne 0 ]; then
-          echo "❌ Build başarısız! Exit code: $BUILD_STATUS"
-          echo "📋 Son 100 satır:"
-          tail -100 build.log
+          echo "❌ Archive başarısız! Exit code: $BUILD_STATUS"
+          echo "📋 Hata detayları (son 100 satır):"
+          tail -100 archive.log
+          echo ""
+          echo "📋 Tüm log (ilk 50 satır):"
+          head -50 archive.log
           exit $BUILD_STATUS
         fi
+        echo "✅ Archive başarılı!"
     
     - name: Create Export Options
       if: success()
@@ -76,32 +77,58 @@ jobs:
         </dict>
         </plist>
         EOF
+        echo "✅ ExportOptions.plist oluşturuldu"
     
     - name: Export IPA
       if: success()
       run: |
+        echo "📤 IPA export ediliyor..."
         xcodebuild -exportArchive \
           -archivePath ./build/Sessiz.xcarchive \
           -exportPath ./build/export \
           -exportOptionsPlist ./build/ExportOptions.plist \
           CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO
+          CODE_SIGNING_REQUIRED=NO \
+          2>&1 | tee export.log
+        EXPORT_STATUS=${PIPESTATUS[0]}
+        if [ $EXPORT_STATUS -ne 0 ]; then
+          echo "❌ Export başarısız! Exit code: $EXPORT_STATUS"
+          echo "📋 Hata detayları (son 100 satır):"
+          tail -100 export.log
+          exit $EXPORT_STATUS
+        fi
+        echo "✅ Export başarılı!"
     
-    - name: Find and Upload IPA
+    - name: Find IPA file
       if: success()
+      id: find_ipa
       run: |
         IPA_FILE=$(find ./build/export -name "*.ipa" 2>/dev/null | head -1)
         if [ -z "$IPA_FILE" ]; then
-          echo "❌ IPA bulunamadı!"
-          ls -la ./build/export/ || true
+          echo "❌ IPA dosyası bulunamadı!"
+          echo "📁 Export klasörü içeriği:"
+          ls -la ./build/export/ 2>/dev/null || echo "Export klasörü yok"
           exit 1
         fi
-        echo "✅ IPA: $IPA_FILE"
+        echo "ipa_path=$IPA_FILE" >> $GITHUB_OUTPUT
+        echo "✅ IPA bulundu: $IPA_FILE"
+        ls -lh "$IPA_FILE"
     
     - name: Upload IPA artifact
       if: success()
       uses: actions/upload-artifact@v4
       with:
         name: Sessiz.ipa
-        path: build/export/*.ipa
+        path: ${{ steps.find_ipa.outputs.ipa_path }}
         retention-days: 30
+    
+    - name: Upload build logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs
+        path: |
+          archive.log
+          export.log
+        if-no-files-found: ignore
+        retention-days: 7
