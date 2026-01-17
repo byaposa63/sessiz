@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1000001 /* AppDelegate.swift */ = {isa = PBXBuildFile; fileRef = A1000002 /* AppDelegate.swift */; };
-		A1000003 /* ViewController.swift */ = {isa = PBXBuildFile; fileRef = A1000004 /* ViewController.swift */; };
-		A1000005 /* LocationManager.swift */ = {isa = PBXBuildFile; fileRef = A1000006 /* LocationManager.swift */; };
-		A1000007 /* AudioRecorder.swift */ = {isa = PBXBuildFile; fileRef = A1000008 /* AudioRecorder.swift */; };
-		A1000009 /* DataUploader.swift */ = {isa = PBXBuildFile; fileRef = A1000010 /* DataUploader.swift */; };
-		A1000011 /* Assets.xcassets */ = {isa = PBXBuildFile; fileRef = A1000012 /* Assets.xcassets */; };
-		A1000013 /* LaunchScreen.storyboard */ = {isa = PBXBuildFile; fileRef = A1000014 /* LaunchScreen.storyboard */; };
+		A1000100 /* AppDelegate.swift */ = {isa = PBXBuildFile; fileRef = A1000002 /* AppDelegate.swift */; };
+		A1000101 /* ViewController.swift */ = {isa = PBXBuildFile; fileRef = A1000004 /* ViewController.swift */; };
+		A1000102 /* LocationManager.swift */ = {isa = PBXBuildFile; fileRef = A1000006 /* LocationManager.swift */; };
+		A1000103 /* AudioRecorder.swift */ = {isa = PBXBuildFile; fileRef = A1000008 /* AudioRecorder.swift */; };
+		A1000104 /* DataUploader.swift */ = {isa = PBXBuildFile; fileRef = A1000010 /* DataUploader.swift */; };
+		A1000105 /* Assets.xcassets */ = {isa = PBXBuildFile; fileRef = A1000012 /* Assets.xcassets */; };
+		A1000106 /* LaunchScreen.storyboard */ = {isa = PBXBuildFile; fileRef = A1000014 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -120,8 +120,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1000011 /* Assets.xcassets */,
-				A1000013 /* LaunchScreen.storyboard */,
+				A1000105 /* Assets.xcassets */,
+				A1000106 /* LaunchScreen.storyboard */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,11 +132,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1000001 /* AppDelegate.swift */,
-				A1000003 /* ViewController.swift */,
-				A1000005 /* LocationManager.swift */,
-				A1000007 /* AudioRecorder.swift */,
-				A1000009 /* DataUploader.swift */,
+				A1000100 /* AppDelegate.swift */,
+				A1000101 /* ViewController.swift */,
+				A1000102 /* LocationManager.swift */,
+				A1000103 /* AudioRecorder.swift */,
+				A1000104 /* DataUploader.swift */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
