@@ -58,13 +58,6 @@ jobs:
           echo "⚠️  plutil hatası (normal olabilir)"
         }
     
-    - name: List schemes and targets
-      run: |
-        echo "📋 Scheme'ler listeleniyor..."
-        echo "⚠️  Not: xcodebuild -list segmentation fault veriyor, direkt build denenecek"
-        echo "📋 Varsayılan scheme: Sessiz"
-        echo "✅ Scheme listesi atlandı, direkt build yapılacak"
-    
     - name: Build Archive
       run: |
         echo "📦 Archive oluşturuluyor..."
