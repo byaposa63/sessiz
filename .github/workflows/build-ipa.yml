@@ -1,16 +1,3 @@
-═══════════════════════════════════════════════════════════════
-  GITHUB WORKFLOW - KOPYALA YAPIŞTIR
-═══════════════════════════════════════════════════════════════
-
-GitHub'da şu adımları izleyin:
-
-1. https://github.com/byaposa63/sessiz adresine gidin
-2. "Add file" → "Create new file" butonuna tıklayın
-3. Dosya yolu: .github/workflows/build-ipa.yml
-4. Aşağıdaki içeriği yapıştırın:
-
-═══════════════════════════════════════════════════════════════
-
 name: Build iOS .ipa
 
 on:
@@ -18,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-latest  # Mac runner kullanılacak
     
     steps:
     - name: Checkout code
@@ -141,13 +128,4 @@ jobs:
           export.log
         if-no-files-found: ignore
         retention-days: 7
-
-═══════════════════════════════════════════════════════════════
-
-5. "Commit new file" butonuna tıklayın
-6. Actions sekmesine gidin
-7. "Build iOS .ipa" workflow'unu seçin
-8. "Run workflow" butonuna tıklayın
-
-═══════════════════════════════════════════════════════════════
 
