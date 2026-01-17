@@ -14,7 +14,7 @@ jobs:
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '15.4'  # Daha eski, stabil versiyon
+        xcode-version: '16.4'  # En eski mevcut versiyon (15.4 yok)
     
     - name: Show project structure
       run: |

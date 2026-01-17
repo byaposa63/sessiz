@@ -95,18 +95,18 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					A1000001 = {
-						CreatedOnToolsVersion = 15.0;
+						CreatedOnToolsVersion = 16.0;
 						DevelopmentTeam = "";
-						LastSwiftMigration = 1500;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
 			buildConfigurationList = A1000023 /* Build configuration list for PBXProject "Sessiz" */;
-			compatibilityVersion = "Xcode 15.0";
+			compatibilityVersion = "Xcode 16.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
