@@ -140,6 +140,30 @@ jobs:
         path: ${{ steps.find_ipa.outputs.ipa_path }}
         retention-days: 30
     
+    - name: Upload IPA to FTP server
+      if: success()
+      env:
+        FTP_HOST: 147.93.42.246
+        FTP_USER: u265210178.papayawhip-falcon-938452.hostingersite.com
+        FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+      run: |
+        echo "📤 IPA dosyası FTP'ye yükleniyor..."
+        IPA_FILE="${{ steps.find_ipa.outputs.ipa_path }}"
+        if [ -z "$FTP_PASS" ]; then
+          echo "⚠️  FTP_PASSWORD secret tanımlı değil, FTP yükleme atlandı"
+          echo "💡 GitHub Secrets'a FTP_PASSWORD ekleyin: Settings > Secrets > Actions > New secret"
+          exit 0
+        fi
+        curl -T "$IPA_FILE" \
+          ftp://$FTP_USER:$FTP_PASS@$FTP_HOST/public_html/uploads/app/Sessiz.ipa \
+          --ftp-create-dirs || {
+          echo "❌ FTP yükleme başarısız!"
+          echo "✅ IPA dosyası GitHub Artifacts'tan indirilebilir"
+          exit 0
+        }
+        echo "✅ IPA dosyası FTP'ye yüklendi!"
+        echo "🔗 İndirme linki: https://papayawhip-falcon-938452.hostingersite.com/uploads/app/Sessiz.ipa"
+    
     - name: Upload build logs
       if: failure()
       uses: actions/upload-artifact@v4
